@@ -15,8 +15,8 @@ Construir una base sólida en Python para desarrollar apps de gestión (inventar
 | Fase | Contenido | Estado |
 |------|-----------|--------|
 | **Fase 0** | Setup: Python, UV, Windsurf, Flet | ✅ Completada |
-| **Fase 1** | Fundamentos Python | ✅ En progreso |
-| **Fase 2** | Base de datos con SQLite | 🔄 Pendiente |
+| **Fase 1** | Fundamentos Python | ✅ Completada |
+| **Fase 2** | Base de datos con SQLite | 🔄 En progreso |
 | **Fase 3** | Interfaz gráfica con Flet | ⬜ Pendiente |
 | **Fase 4** | App completa para PyME | ⬜ Pendiente |
 | **Fase 5** | Empaquetado .exe y despliegue web | ⬜ Pendiente |
