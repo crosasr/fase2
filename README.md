@@ -27,18 +27,10 @@ Construir una base sólida en Python para desarrollar apps de gestión (inventar
 
 | Archivo | Tema | Conceptos |
 |---------|------|-----------|
-| `Dia01.py` | Variables, tipos y f-strings | str, int, float, bool, formato de números |
-| `dia2.py` | Listas | append, remove, sort, enumerate |
-| `dia3.py` | Diccionarios | claves, valores, lista de dicts, generator expression |
-| `Dia04.py` | if/elif/else + operadores | condicionales, and/or, operador ternario encadenado |
-| `dia5.py` | for y while | filtros, break, continue, while True |
-| `proyDia5.py` | Proyecto buscador | buscador por rango de precio |
-| `Dia06_07.py` | Menú interactivo | CRUD en consola, .lower(), búsqueda parcial con in |
-| `Dia08.py` | Funciones | parámetros, return, lógica de negocio reutilizable |
-| `dia09.py` | Valores por defecto | parámetros opcionales, resumen de venta |
-| `dia10.py` | Scope y try/except | variables locales/globales, validación de inputs || `dia15.py` | Primera BD SQLite | CREATE TABLE, INSERT, SELECT, executemany |
+| `dia15.py` | Primera BD SQLite | CREATE TABLE, INSERT, SELECT, executemany |
 | `dia16.py` | UPDATE y DELETE | Modificar precios, eliminar registros, WHERE |
 | `dia17.py` | SELECT avanzado | WHERE, ORDER BY, LIKE, función consultar() |
+| `dia18.py` | GROUP BY y agregaciones | COUNT, SUM, AVG, MAX, MIN, AS, GROUP BY |
 | `NOTAS.md` | Notas de aprendizaje | Conceptos explicados en lenguaje propio |
 | `PERFIL.md` | Perfil del proyecto | Contexto para Windsurf |
 
