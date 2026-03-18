@@ -36,9 +36,11 @@ Construir una base sólida en Python para desarrollar apps de gestión (inventar
 | `Dia06_07.py` | Menú interactivo | CRUD en consola, .lower(), búsqueda parcial con in |
 | `Dia08.py` | Funciones | parámetros, return, lógica de negocio reutilizable |
 | `dia09.py` | Valores por defecto | parámetros opcionales, resumen de venta |
-| `dia10.py` | Scope y try/except | variables locales/globales, validación de inputs |
+| `dia10.py` | Scope y try/except | variables locales/globales, validación de inputs || `dia15.py` | Primera BD SQLite | CREATE TABLE, INSERT, SELECT, executemany |
+| `dia16.py` | UPDATE y DELETE | Modificar precios, eliminar registros, WHERE |
+| `dia17.py` | SELECT avanzado | WHERE, ORDER BY, LIKE, función consultar() |
 | `NOTAS.md` | Notas de aprendizaje | Conceptos explicados en lenguaje propio |
-| `PERFIL.md` | Perfil del proyecto | Contexto para Windsurf y herramientas de IA |
+| `PERFIL.md` | Perfil del proyecto | Contexto para Windsurf |
 
 ---
 
@@ -76,7 +78,7 @@ App de escritorio funcional para una PyME con:
 ## 👤 Autor
 
 <p align="center">
-  <img src="assets/perfil.jpeg" width="150"/>
+  <img src="https://github.com/crosasr.png" width="150"/>
 </p>
 
 <p align="center">
