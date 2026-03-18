@@ -1,6 +1,6 @@
-# 🐍 Fase 1 — Fundamentos Python para PyMEs
+# 📦 Fase 2 — Datos persistentes con SQLite
 
-Repositorio de aprendizaje activo. Ruta estructurada de Python aplicado al desarrollo de aplicaciones reales para pequeñas y medianas empresas.
+Repositorio de aprendizaje activo. Ruta estructurada de SQLite aplicado al desarrollo de aplicaciones reales para pequeñas y medianas empresas.
 
 ---
 
@@ -15,8 +15,8 @@ Construir una base sólida en Python para desarrollar apps de gestión (inventar
 | Fase | Contenido | Estado |
 |------|-----------|--------|
 | **Fase 0** | Setup: Python, UV, Windsurf, Flet | ✅ Completada |
-| **Fase 1** | Fundamentos Python | 🔄 En progreso |
-| **Fase 2** | Base de datos con SQLite | ⬜ Pendiente |
+| **Fase 1** | Fundamentos Python | ✅ Completada |
+| **Fase 2** | Base de datos con SQLite | 🔄 En progreso |
 | **Fase 3** | Interfaz gráfica con Flet | ⬜ Pendiente |
 | **Fase 4** | App completa para PyME | ⬜ Pendiente |
 | **Fase 5** | Empaquetado .exe y despliegue web | ⬜ Pendiente |
@@ -36,9 +36,11 @@ Construir una base sólida en Python para desarrollar apps de gestión (inventar
 | `Dia06_07.py` | Menú interactivo | CRUD en consola, .lower(), búsqueda parcial con in |
 | `Dia08.py` | Funciones | parámetros, return, lógica de negocio reutilizable |
 | `dia09.py` | Valores por defecto | parámetros opcionales, resumen de venta |
-| `dia10.py` | Scope y try/except | variables locales/globales, validación de inputs |
+| `dia10.py` | Scope y try/except | variables locales/globales, validación de inputs || `dia15.py` | Primera BD SQLite | CREATE TABLE, INSERT, SELECT, executemany |
+| `dia16.py` | UPDATE y DELETE | Modificar precios, eliminar registros, WHERE |
+| `dia17.py` | SELECT avanzado | WHERE, ORDER BY, LIKE, función consultar() |
 | `NOTAS.md` | Notas de aprendizaje | Conceptos explicados en lenguaje propio |
-| `PERFIL.md` | Perfil del proyecto | Contexto para Windsurf y herramientas de IA |
+| `PERFIL.md` | Perfil del proyecto | Contexto para Windsurf |
 
 ---
 
@@ -76,7 +78,7 @@ App de escritorio funcional para una PyME con:
 ## 👤 Autor
 
 <p align="center">
-  <img src="assets/perfil.jpeg" width="150"/>
+  <img src="https://github.com/crosasr.png" width="150"/>
 </p>
 
 <p align="center">
