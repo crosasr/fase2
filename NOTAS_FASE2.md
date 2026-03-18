@@ -133,7 +133,7 @@ conn.commit()
 
 **Regla crítica:** SIEMPRE usar WHERE en DELETE:
 ```sql
-DELETE FROM productos           -- ❌ borra TODA la tabla
+DELETE FROM productos               -- ❌ borra TODA la tabla
 DELETE FROM productos WHERE id = 3  -- ✅ borra solo ese registro
 ```
 
@@ -170,11 +170,11 @@ conn.commit()
 
 ### Estructura completa de SELECT
 ```sql
-SELECT  columnas        -- qué quiero ver
-FROM    tabla           -- de dónde
-WHERE   condición       -- filtro de filas
+SELECT  columnas           -- qué quiero ver
+FROM    tabla              -- de dónde
+WHERE   condición          -- filtro de filas
 ORDER BY columna ASC/DESC  -- cómo ordenar
-LIMIT   n               -- cuántos resultados
+LIMIT   n                  -- cuántos resultados
 ```
 
 En español:
@@ -207,9 +207,9 @@ Equivalente Python: `"si" in nombre.lower()`
 
 ### ORDER BY
 ```sql
-ORDER BY precio ASC    -- menor a mayor (default)
-ORDER BY precio DESC   -- mayor a menor
-ORDER BY precio * stock DESC  -- ordenar por valor calculado
+ORDER BY precio ASC               -- menor a mayor (default)
+ORDER BY precio DESC              -- mayor a menor
+ORDER BY precio * stock DESC      -- ordenar por valor calculado
 ```
 
 ### LIMIT
@@ -269,4 +269,235 @@ for i, (nombre, precio, stock) in enumerate(resultado, 1):
 
 ---
 
-*Actualizar con días 18-20 al completarlos.*
+## DÍA 18 — GROUP BY y agregaciones
+
+### Para qué sirve GROUP BY
+Agrupa filas que comparten un valor y aplica una función sobre cada grupo.
+Sin GROUP BY las funciones como SUM o COUNT operan sobre toda la tabla.
+Con GROUP BY operan por categoría.
+
+```
+Sin GROUP BY → una sola fila con el total global
+Con GROUP BY → una fila por cada categoría
+```
+
+### Funciones de agregación
+```sql
+COUNT(*)           -- número de filas en el grupo
+SUM(precio*stock)  -- suma de una columna o expresión
+AVG(precio)        -- promedio
+MAX(precio)        -- valor más alto
+MIN(precio)        -- valor más bajo
+```
+
+### Sintaxis básica
+```sql
+SELECT  categoria,
+        COUNT(*)              AS total_productos,
+        SUM(precio * stock)   AS valor_inventario,
+        AVG(precio)           AS precio_promedio,
+        MAX(precio)           AS precio_maximo
+FROM    productos
+GROUP BY categoria
+ORDER BY valor_inventario DESC
+```
+
+En español:
+```
+"Para cada categoría distinta,
+ cuéntame cuántos productos hay,
+ súmame el valor total del stock,
+ dime el precio promedio y el máximo,
+ ordena de mayor a menor valor"
+```
+
+### AS — alias de columna
+```sql
+COUNT(*) AS total          -- renombra la columna en el resultado
+SUM(precio * stock) AS valor_inventario
+```
+Sin AS el nombre de la columna sería `COUNT(*)` — ilegible en código y en Flet.
+
+### HAVING — filtrar grupos (≠ WHERE)
+```sql
+-- WHERE filtra filas ANTES de agrupar
+-- HAVING filtra grupos DESPUÉS de agrupar
+
+SELECT categoria, COUNT(*) AS total
+FROM productos
+GROUP BY categoria
+HAVING COUNT(*) >= 2        -- solo categorías con 2 o más productos
+```
+
+```
+WHERE  → filtra filas individuales  → se ejecuta ANTES del GROUP BY
+HAVING → filtra grupos              → se ejecuta DESPUÉS del GROUP BY
+```
+
+### En Python — leer resultados con alias
+```python
+# fetchall() devuelve tuplas en el orden del SELECT
+for categoria, total, valor, promedio, maximo in resultado:
+    print(f"{categoria:<15} {total} productos  ${valor:>12,.2f}")
+
+# Con row_factory los alias se usan como clave de diccionario:
+# row["total_productos"], row["valor_inventario"]
+```
+
+### Caso de uso real: resumen por categoría
+```python
+resumen = consultar("""
+    SELECT  categoria,
+            COUNT(*)            AS total,
+            SUM(stock)          AS unidades,
+            SUM(precio * stock) AS valor,
+            AVG(precio)         AS precio_prom
+    FROM    productos
+    GROUP BY categoria
+    ORDER BY valor DESC
+""")
+```
+Esto es exactamente lo que alimenta un dashboard de inventario por categoría.
+
+---
+
+## DÍA 19 — Mini-proyecto integrador
+
+### Qué cambió respecto a los días anteriores
+
+Hasta el día 17 cada archivo era independiente y usaba conexiones sueltas.
+El día 19 introduce una arquitectura de dos capas que se mantiene igual en Fase 3:
+
+```
+database.py  ←  toda la lógica SQLite (no cambia en Fase 3)
+dia19.py     ←  interfaz CLI (se reemplaza por Flet en Fase 3)
+```
+
+La separación es la decisión de diseño más importante de la Fase 2.
+
+### row_factory — acceso por nombre en lugar de índice
+```python
+# Sin row_factory (días 15-17)
+p[0]  # id
+p[1]  # nombre
+p[2]  # precio   ← frágil: si cambia el orden del SELECT, todo se rompe
+
+# Con row_factory
+conn.row_factory = sqlite3.Row
+p["id"]
+p["nombre"]
+p["precio"]   # ← robusto: funciona sin importar el orden del SELECT
+```
+
+Se activa en la función de conexión para que aplique a todas las consultas:
+```python
+def get_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+```
+
+### Context manager — with conn as conn
+```python
+# Sin context manager (días 15-17) — hay que cerrar manualmente
+conn = sqlite3.connect("inventario.db")
+cursor = conn.cursor()
+cursor.execute(...)
+conn.commit()
+conn.close()   # si hay error antes de aquí, la conexión queda abierta
+
+# Con context manager — commit y close automáticos
+with get_connection() as conn:
+    conn.execute(...)
+    conn.commit()
+# conn.close() se llama automáticamente al salir del bloque
+```
+
+### lastrowid — recuperar el ID del INSERT
+```python
+with get_connection() as conn:
+    cursor = conn.execute(
+        "INSERT INTO productos (nombre, precio, stock) VALUES (?, ?, ?)",
+        (nombre, precio, stock)
+    )
+    conn.commit()
+    return cursor.lastrowid   # ← el ID que AUTOINCREMENT asignó
+```
+Útil en Flet para mostrar confirmación: "Producto guardado con ID: 7".
+
+### rowcount — verificar si el cambio ocurrió
+```python
+cursor = conn.execute(
+    "UPDATE productos SET precio = ? WHERE id = ?",
+    (precio, pid)
+)
+conn.commit()
+return cursor.rowcount > 0   # True si modificó al menos una fila
+                              # False si el id no existe
+```
+Mismo patrón para DELETE. Permite dar feedback real al usuario en lugar de asumir que funcionó.
+
+### dict(row) — convertir Row a diccionario
+```python
+# Row es conveniente para acceso por nombre pero no es serializable
+row = conn.execute("SELECT COUNT(*) AS total ...").fetchone()
+
+# Para pasar datos a Flet o a cualquier función externa:
+return dict(row)   # {"total": 5, "valor": 12500.00, ...}
+```
+
+### Path para la ruta de la base de datos
+```python
+from pathlib import Path
+
+DB_PATH = Path(__file__).parent / "tienda.db"
+# __file__ → ruta del archivo database.py
+# .parent  → carpeta donde vive database.py
+# / "tienda.db" → la BD siempre se crea junto al código
+```
+Sin esto, la BD se crea en el directorio desde donde se ejecuta el script,
+que puede variar. Con Path siempre está en el lugar correcto.
+
+### init_db() — patrón de inicialización
+```python
+def init_db():
+    """Crea las tablas si no existen. Llamar al arrancar la app."""
+    with get_connection() as conn:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS productos (...)
+        """)
+        conn.commit()
+```
+Se llama una sola vez al inicio del programa. En Flet irá dentro de `main()`.
+
+### Estructura del database.py
+```
+get_connection()       → fábrica de conexiones con row_factory
+init_db()              → crea tablas al arrancar
+
+agregar_producto()     → INSERT, retorna lastrowid
+obtener_todos()        → SELECT *, orden por nombre
+obtener_por_id()       → SELECT WHERE id, retorna Row o None
+buscar_por_nombre()    → SELECT WHERE LIKE
+actualizar_producto()  → UPDATE, retorna rowcount > 0
+eliminar_producto()    → DELETE, retorna rowcount > 0
+
+stock_critico()        → SELECT WHERE stock <= umbral
+resumen_inventario()   → COUNT, SUM, AVG en una sola query → dict
+```
+
+### Transición a Fase 3
+```
+FASE 2                     FASE 3
+─────────────────          ──────────────────────────
+database.py          →     database.py  (sin cambios)
+dia19.py (CLI)       →     main.py (Flet)
+input()              →     ft.TextField
+print()              →     ft.Text / ft.DataTable
+while True: menú     →     ft.app(target=main)
+```
+`database.py` no se toca en Fase 3. Solo cambia el frontend.
+
+---
+
+*Fase 2 completada — días 15 al 19.*
